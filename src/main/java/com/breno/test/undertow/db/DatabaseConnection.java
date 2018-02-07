@@ -7,7 +7,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public final class DatabaseConnection {
 
-	private final static DataSource dataSource;
+	private static final DataSource dataSource;
 
 	static {
 		dataSource = configureDatasource();
@@ -19,15 +19,15 @@ public final class DatabaseConnection {
 
 	private static DataSource configureDatasource() {
 		HikariConfig config = new HikariConfig();
-		config.setJdbcUrl("jdbc:jtds:sqlserver://localhost:1433/dbTest;SendStringParametersAsUnicode=false");
-		config.setUsername("usrTest");
-		config.setPassword("test123");
-		config.setMinimumIdle(2);
-		config.setMaximumPoolSize(20);
-		config.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
+		config.setJdbcUrl(System.getProperty("db.url", "jdbc:jtds:sqlserver://localhost:1433/dbTest;SendStringParametersAsUnicode=false"));
+		config.setUsername(System.getProperty("db.user","usrTest"));
+		config.setPassword(System.getProperty("db.pass","test123"));
+		config.setMinimumIdle(Integer.parseInt(System.getProperty("min.idle", "2")));
+		config.setMaximumPoolSize(Integer.parseInt(System.getProperty("max.pool", "20")));
+		config.setDriverClassName(System.getProperty("db.driver.class.name","net.sourceforge.jtds.jdbc.Driver"));
 		config.setConnectionTimeout(30000);
-		config.setConnectionTestQuery("SELECT 1");
-		config.addDataSourceProperty("cachePrepStmts", "true");
+		config.setConnectionTestQuery(System.getProperty("db.query.verify","SELECT 1"));
+		//config.addDataSourceProperty("cachePrepStmts", "true");
 
 		return new HikariDataSource(config);
 	}
